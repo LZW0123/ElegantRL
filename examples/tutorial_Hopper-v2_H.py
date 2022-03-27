@@ -3,7 +3,7 @@ import sys
 from elegantrl.train.demo import *
 
 
-def demo_continuous_action_on_policy():
+def demo_continuous_action_on_policy(): # type: ignore
     gpu_id = int(sys.argv[1]) if len(sys.argv) > 1 else 0  # >=0 means GPU ID, -1 means CPU
     drl_id = 1  # int(sys.argv[2])
     env_id = 4  # int(sys.argv[3])
