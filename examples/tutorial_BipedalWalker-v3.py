@@ -43,6 +43,6 @@ elif flag == "Tournament-based":
         for i in range(4)
     ]  # [[0,], [1, ], [2, ]] or [[0, 1], [2, 3]]
     python_path = "../bin/python3"
-    train_and_evaluate_mp(args, python_path)  # multiple processing
+    train_and_evaluate_mp(args, python_path)  # type: ignore # multiple processing 
 else:
     raise ValueError(f"Unknown flag: {flag}")

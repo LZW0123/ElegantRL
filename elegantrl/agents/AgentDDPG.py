@@ -110,20 +110,20 @@ class AgentDDPG(AgentBase):
         obj_actor = None
         for _ in range(int(buffer.now_len / batch_size * repeat_times)):
             obj_critic, state = self.get_obj_critic(buffer, batch_size)
-            self.optim_update(self.cri_optim, obj_critic)
+            self.optim_update(self.cri_optim, obj_critic) # first argument：optimizer
             if self.if_use_cri_target:
                 self.soft_update(self.cri_target, self.cri, soft_update_tau)
 
-            action_pg = self.act(state)  # policy gradient
-            obj_actor = -self.cri(state, action_pg).mean()
+            action_pg = self.act(state)  # policy gradient 这个返回的变量是动作概率
+            obj_actor = -self.cri(state, action_pg).mean() # 这个似乎是q值？打印一下看看是什么东西
             self.optim_update(self.act_optim, obj_actor)
             if self.if_use_act_target:
                 self.soft_update(self.act_target, self.act, soft_update_tau)
-        return obj_critic.item(), obj_actor.item()
+        return obj_critic.item(), obj_actor.item() # type: ignore
 
     def get_obj_critic_raw(self, buffer, batch_size):
         """
-        Calculate the loss of networks with **uniform sampling**.
+        Calculate the loss of networks with **uniform sampling**. 均匀抽样
 
         :param buffer: the ReplayBuffer instance that stores the trajectories.
         :param batch_size: the size of batch data for Stochastic Gradient Descent (SGD).
@@ -139,7 +139,7 @@ class AgentDDPG(AgentBase):
 
     def get_obj_critic_per(self, buffer, batch_size):
         """
-        Calculate the loss of the network with **Prioritized Experience Replay (PER)**.
+        Calculate the loss of the network with **Prioritized Experience Replay (PER)**. 优先经验回放
 
         :param buffer: the ReplayBuffer instance that stores the trajectories.
         :param batch_size: the size of batch data for Stochastic Gradient Descent (SGD).
