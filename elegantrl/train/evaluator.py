@@ -153,12 +153,12 @@ def save_learning_curve(recorder=None, cwd='.', save_title='learning curve', fig
 
     recorder = np.array(recorder)
     steps = recorder[:, 0]  # x-axis is training steps
-    r_avg = recorder[:, 1]
-    r_std = recorder[:, 2]
-    r_exp = recorder[:, 3]
-    obj_c = recorder[:, 4]
-    obj_a = recorder[:, 5]
-
+    r_avg = recorder[:, 1] # 这个是平均奖励
+    r_std = recorder[:, 2] # 这个是奖励的标准差
+    r_exp = recorder[:, 3] # 
+    obj_c = recorder[:, 4] # 这个是critic网络的Loss，这个loss只需要看前期的结果，如果loss前期是下降的，那么就可以
+    obj_a = recorder[:, 5] # 这个是actor网络的Loss
+    
     '''plot subplots'''
     import matplotlib as mpl
     mpl.use('Agg')
