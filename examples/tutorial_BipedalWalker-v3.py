@@ -1,5 +1,5 @@
 import gym
-from elegantrl.agents.agent import AgentPPO
+from elegantrl.agents import AgentPPO
 from elegantrl.train.config import get_gym_env_args, Arguments
 from elegantrl.train.run import *
 
@@ -22,27 +22,25 @@ args = Arguments(AgentPPO, env_func=env_func, env_args=env_args)
 
 args.target_step = args.max_step * 4
 args.gamma = 0.98
-args.eval_times = 2**4
+args.eval_times = 2 ** 4
 
-flag = "SingleProcess"
+if __name__ == '__main__':
+    flag = "SingleProcess"
 
-if flag == "SingleProcess":
-    args.learner_gpus = 0
-    train_and_evaluate(args)
-elif flag == "MultiProcess":
-    args.learner_gpus = 0
-    train_and_evaluate_mp(args)
-elif flag == "MultiGPU":
-    args.learner_gpus = [0, 1, 2, 3]
-    train_and_evaluate_mp(args)
-elif flag == "Tournament-based":
-    args.learner_gpus = [
-        [
-            i,
-        ]
-        for i in range(4)
-    ]  # [[0,], [1, ], [2, ]] or [[0, 1], [2, 3]]
-    python_path = "../bin/python3"
-    train_and_evaluate_mp(args, python_path)  # type: ignore # multiple processing 
-else:
-    raise ValueError(f"Unknown flag: {flag}")
+    if flag == "SingleProcess":
+        args.learner_gpus = 0
+        train_and_evaluate(args)
+    elif flag == "MultiProcess":
+        args.learner_gpus = 0
+        train_and_evaluate_mp(args)
+    elif flag == "MultiGPU":
+        args.learner_gpus = [0, 1, 2, 3]
+        train_and_evaluate_mp(args)
+    elif flag == "Tournament-based":
+        args.learner_gpus = [
+            [i, ] for i in range(4)
+        ]  # [[0,], [1, ], [2, ]] or [[0, 1], [2, 3]]
+        python_path = "../bin/python3"
+        train_and_evaluate_mp(args, python_path)  # multiple processing
+    else:
+        raise ValueError(f"Unknown flag: {flag}")

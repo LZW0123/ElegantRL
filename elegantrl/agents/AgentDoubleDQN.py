@@ -1,12 +1,9 @@
-import numpy.random as rd
 import torch
-
-from elegantrl.agents.AgentDQN import AgentDQN
 from elegantrl.agents.net import QNetTwin, QNetTwinDuel
-from typing import Tuple
+from elegantrl.agents.AgentDQN import AgentDQN
 
 
-class AgentDoubleDQN(AgentDQN):  # [ElegantRL.2021.10.25]
+class AgentDoubleDQN(AgentDQN):
     """
     Bases: ``AgentDQN``
 
@@ -21,35 +18,11 @@ class AgentDoubleDQN(AgentDQN):  # [ElegantRL.2021.10.25]
     :param agent_id[int]: if the visible_gpu is '1,9,3,4', agent_id=1 means (1,9,4,3)[agent_id] == 9
     """
 
-    def __init__(self):
-        AgentDQN.__init__(self)
-        self.ClassCri = QNetTwin
-        self.soft_max = torch.nn.Softmax(dim=1)
+    def __init__(self, net_dim, state_dim, action_dim, gpu_id=0, args=None):
+        self.act_class = getattr(self, "act_class", QNetTwin)
+        super().__init__(net_dim, state_dim, action_dim, gpu_id, args)
 
-    def select_actions(
-        self, states: torch.Tensor
-    ) -> torch.Tensor:  # for discrete action space
-        """
-        Select discrete actions given an array of states.
-
-        .. note::
-            Using ϵ-greedy to select uniformly random actions for exploration.
-
-        :param states: an array of states in a shape (batch_size, state_dim, ).
-        :return: an array of actions in a shape (batch_size, action_dim, ) where each action is clipped into range(-1, 1).
-        """
-        actions = self.act(states.to(self.device))
-        if rd.rand() < self.explore_rate:  # epsilon-greedy
-            a_prob = self.soft_max(actions)
-            a_ints = torch.multinomial(a_prob, num_samples=1, replacement=True)[:, 0]
-            # a_int = rd.choice(self.action_dim, prob=a_prob)  # numpy version
-        else:
-            a_ints = actions.argmax(dim=1)
-        return a_ints.detach().cpu()
-
-    def get_obj_critic_raw(
-        self, buffer, batch_size
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    def get_obj_critic_raw(self, buffer, batch_size):
         """
         Calculate the loss of the network and predict Q values with **uniform sampling**.
 
@@ -94,6 +67,6 @@ class AgentDoubleDQN(AgentDQN):  # [ElegantRL.2021.10.25]
 
 
 class AgentD3QN(AgentDoubleDQN):  # D3QN: DuelingDoubleDQN
-    def __init__(self):
-        AgentDoubleDQN.__init__(self)
-        self.ClassCri = QNetTwinDuel
+    def __init__(self, net_dim, state_dim, action_dim, gpu_id=0, args=None):
+        self.act_class = getattr(self, "act_class", QNetTwinDuel)
+        super().__init__(net_dim, state_dim, action_dim, gpu_id, args)
