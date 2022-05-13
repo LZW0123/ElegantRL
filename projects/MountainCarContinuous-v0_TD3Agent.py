@@ -1,6 +1,6 @@
 from matplotlib.pyplot import get
 import gym
-from elegantrl.agents.agent import AgentDDPG
+from elegantrl.agents.AgentTD3 import AgentDDPG
 from elegantrl.train.config import get_gym_env_args, Arguments
 from elegantrl.train.run import *
 
