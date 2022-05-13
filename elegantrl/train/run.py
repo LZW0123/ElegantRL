@@ -20,12 +20,12 @@ def train_and_evaluate(args):
     env = build_env(args.env, args.env_func, args.env_args)
 
     agent = init_agent(args, gpu_id, env)
-    buffer = init_buffer(args, gpu_id)
+    buffer = init_buffer(args, gpu_id) # 数据存在gpu上
     evaluator = init_evaluator(args, gpu_id)
 
     agent.state = env.reset()
     if args.if_off_policy:
-        trajectory = agent.explore_env(env, args.target_step)
+        trajectory = agent.explore_env(env, args.target_step) # 这个挺不错的，内部还有转换
         buffer.update_buffer((trajectory,))
 
     """start training"""
